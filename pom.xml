@@ -3,16 +3,16 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<parent>
 		<groupId>de.julielab</groupId>
 		<artifactId>julielab-parent</artifactId>
 		<version>2.0.1-SNAPSHOT</version>
-	</parent>	
-	
+	</parent>
+
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>JenaUmlsFilter</artifactId>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<groupId>de.julielab</groupId>
 	<dependencies>
 		<dependency>
