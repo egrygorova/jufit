@@ -1,44 +1,37 @@
 package de.julielab.extension;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.File;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 public class TransformToConceptMapperDict {
-	//Input - JuFiT-WB
-	//Output - CM-WB
-	public static void main(String[] args) {
-		String pathToGazetteer = "src/main/resources/gazetterTest";
-		
-		try {
-			String content = new String(Files.readAllBytes(Paths.get(pathToGazetteer)));
-			System.out.println(content);
-			System.out.println("------------------------");
-			replaceContent(content);
+	
+	public static void main (String args[]) {
+	
+	DictToken token = new DictToken();
+	token.setCanonical("haha");
+	token.setCodeType("UMLS");
+	token.setCodeValue("Codevalue");
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-	}
+	  try {
 
-	private static void replaceContent(String content) {
-		String cuiRegex = "[C]{1}\\d{7}";
-		content = content.replaceAll("@+", "");
-		content = content.replaceAll("ANY", "");
-		content = content.replaceAll("UMLS", "\n\tCodeType=UMLS");
-		content = content.replaceAll("SC", "S\tCodeValue=C");
-		content = "<token canonical=" + content + "\n</token>";
-		System.out.println(content);
-		compareCuis(cuiRegex);
-		// TODO Auto-generated method stub
-		
-	}
+		File file = new File("src/main/resources/gazetter.xml");
+		JAXBContext jaxbContext = JAXBContext.newInstance(DictToken.class);
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-	private static void compareCuis(String cuiRegex) {
-		
-		// TODO Auto-generated method stub
-		
+		// output pretty printed
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+		jaxbMarshaller.marshal(token, file);
+		jaxbMarshaller.marshal(token, System.out);
+
+	      } catch (JAXBException e) {
+		e.printStackTrace();
+	      }
+	
 	}
+	
+
 }
