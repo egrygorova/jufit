@@ -1,5 +1,8 @@
 package de.julielab.extension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -9,11 +12,7 @@ public class DictToken {
 	String canonical;
 	String codeType;
 	String codeValue;
-	String variantBase;
-	
-	public DictToken() {
-		
-	}
+	List<Variant> variants = new ArrayList<>();
 	
 	public String getCanonical() {
 		return canonical;
@@ -39,14 +38,17 @@ public class DictToken {
 	public void setCodeValue(String codeValue) {
 		this.codeValue = codeValue;
 	}
-	public String getVariantBase() {
-		return variantBase;
-	}
 	
-	@XmlElement
-	public void setVariantBase(String variantBase) {
-		this.variantBase = variantBase;
-	}
+	@XmlElement( name = "variant" )
+	  public List<Variant> getVariants()
+	  {
+	    return variants;
+	  }
+
+	  public void setVariants(List<Variant> variants)
+	  {
+	    this.variants = variants;
+	  }
 	
 	
 }

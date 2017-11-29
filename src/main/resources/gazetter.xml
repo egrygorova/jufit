@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dict>
+    <token canonical="Bauchschmerz" codeType="UMLS" codeValue="C0000737">
+        <variant base="Schmerz abdominal"/>
+    </token>
+</dict>
