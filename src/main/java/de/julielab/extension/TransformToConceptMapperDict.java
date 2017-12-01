@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.JAXB;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,19 +35,15 @@ public class TransformToConceptMapperDict {
 	static List<String> canonicals = new ArrayList<>();
 	static List<String> codeTypes = new ArrayList<>();
 	static List<String> codeValues = new ArrayList<>();
-	static List<String> variants = new ArrayList<>();
+	static List<Variant> variants = new ArrayList<>();
 	static List<String> base = new ArrayList<>();
-	// static HashMap<String, String> tokenWithOutCUI = new HashMap<>();
-	// static Map<String,HashMap<String,String>> tokenWithCUI = new
-	// HashMap<String, HashMap<String, String>>();
-	// static Map<String, String> tokenEnd = new HashMap<>();
-	// static List<String> tmp = new ArrayList<>();
+
 	static Multimap<String, String> token = ArrayListMultimap.create();
 
 	public static void main(String args[]) throws ParserConfigurationException, TransformerException {
 
 		try {
-			String content = new String(Files.readAllBytes(Paths.get("src/main/resources/gazetterTest")));
+			String content = new String(Files.readAllBytes(Paths.get("src/main/resources/gazetterWithFilter")));
 			String[] entrys = content.split("\n");
 			String s = null;
 			for (int i = 0; i < entrys.length; i++) {
@@ -65,60 +62,57 @@ public class TransformToConceptMapperDict {
 				dictTokensXML.add(createTokenForXML(canonicals.get(i), codeTypes.get(i), codeValues.get(i)));
 			}
 
-			for (int j = 0; j < dictTokensXML.size() -1; j++) {
-				for (int k = j+1; k < dictTokensXML.size(); k++) {
-					if (dictTokensXML.get(j).getCodeValue().equals(dictTokensXML.get(k).getCodeValue())) {
-						System.out.println(dictTokensXML.get(j).getCodeValue() + " is a variant of " + dictTokensXML.get(k).getCodeValue());
-						Variant variant = createVariantForToken(dictTokensXML.get(j), dictTokensXML.get(k));
-						variants.add(variant.getBase());
-						DictToken completeToken = createTokenWithVariant(dictTokensXML.get(j), variants);
-						dictTokensWithVariants.add(completeToken);
-						dictTokensXML.remove(dictTokensXML.get(k));
-					} else {
-						dictTokensWithVariants.add(dictTokensXML.get(j));
-					}
-				}
-			}
-			
-			
-			createXML(dictTokensWithVariants);
-			
-
-			// Stand: alle Attribute extrahiert, nun die CUIs zählen
-
-//			for (int i = 0; i < codeValues.size() - 1; i++) {
-//				for (int k = i + 1; k < codeValues.size(); k++) {
-//					if (codeValues.get(i).equals(codeValues.get(k))) {
-//						System.out.println(k + " is a variant of " + i);
-//						// createVariantofToken(codeValues.get(i),
-//						// codeValues.get(k));
+//			for (int j = 0; j < dictTokensXML.size() - 1; j++) {
+//				for (int k = j + 1; k < dictTokensXML.size(); k++) {
+//					if (dictTokensXML.get(j).getCodeValue().equals(dictTokensXML.get(k).getCodeValue())) {
+//						System.out.println(dictTokensXML.get(k).getCanonical() + " is a variant of "
+//								+ dictTokensXML.get(j).getCanonical());
+//						Variant variant = createVariantForToken(dictTokensXML.get(j), dictTokensXML.get(k));
+//						// base.add(variant.getBase());
+//						variants.add(variant);
+//						DictToken completeToken = createTokenWithVariant(dictTokensXML.get(j), variants);
+//						dictTokensWithVariants.add(completeToken);
+//						dictTokensXML.remove(k);
+//					} else {
+//						dictTokensWithVariants.add(dictTokensXML.get(j + 1));
 //					}
 //				}
 //			}
+//
+//			for (DictToken dic : dictTokensWithVariants) {
+//				System.out.println("CANONC: " +dic.getCanonical());
+//				for (Variant v : dic.getVariants()) {
+//					System.out.println("VAR: " +v.getBase());
+//				}
+//				System.out.println("------------");
+//			}
+
+			createXMLWithDOM(dictTokensXML);
+
+			createXMLWithJAXB(dictTokensXML);
 
 			for (int i = 0; i < codeValues.size(); i++) {
 				token.put(codeValues.get(i), canonicals.get(i));
 			}
-
-			System.out.println(token);
-			System.out.println(token.entries());
-			System.out.println(token.size());
-			System.out.println(token.keySet() + " " + token.keys());
+			
+//			System.out.println("\n");
+//			System.out.println("----------------");
+//			System.out.println(token);
+//			System.out.println(token.entries());
+//			System.out.println(token.size());
+//			System.out.println(token.keys());
 
 			for (Map.Entry<String, String> entry : token.entries()) {
-				System.out.println(entry.getKey() + "/" + entry.getValue());
+				//System.out.println(entry.getKey() + "/" + entry.getValue());
 
 			}
 
 		} catch (IOException e) {
 		}
-	
+
 	}
 
-	// private static void createVariantofToken(String string, String string2) {
-	// Variant variant = new Variant();
-	//
-	// }
+	// TODO Auto-generated method stub
 
 	// private static void createTokensForXMLWithMap(Multimap<String, String>
 	// token2) {
@@ -134,7 +128,6 @@ public class TransformToConceptMapperDict {
 	private static Variant createVariantForToken(DictToken dictToken, DictToken newVariant) {
 		Variant variant = new Variant();
 		variant.setBase(newVariant.getCanonical());
-		dictToken.setVariants(variants2);
 		return variant;
 	}
 
@@ -144,17 +137,27 @@ public class TransformToConceptMapperDict {
 		token.setCanonical(canonical);
 		token.setCodeType(codeType);
 		token.setCodeValue(codeValue);
-		//token.setVariants(variants);
+		// token.setVariants(variants);
 
 		return token;
 	}
-	
-	private static DictToken createTokenWithVariant(DictToken token, List<String> variants2) {
-		token.setVariants(variants2);
+
+	private static DictToken createTokenWithVariant(DictToken token, List<Variant> variants) {
+		token.setVariants(variants);
 		return token;
 	}
 
-	private static void createXML(List<DictToken> dictTokenXML)
+	private static void createXMLWithJAXB(List<DictToken> dictTokensWithVariants) {
+
+		Dictionary dict = new Dictionary();
+		dict.setTokens(dictTokensWithVariants);
+
+		File file = new File("src/main/resources/gazetterJAXB.xml");
+		JAXB.marshal(dict, file);
+
+	}
+
+	private static void createXMLWithDOM(List<DictToken> dictTokensWithVariants)
 			throws ParserConfigurationException, TransformerException {
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -164,26 +167,19 @@ public class TransformToConceptMapperDict {
 		Element rootElement = doc.createElement("dict");
 		doc.appendChild(rootElement);
 
-		for (DictToken dictToken : dictTokenXML) {
+		for (DictToken dictToken : dictTokensWithVariants) {
 			createXMLEntry(dictToken, doc, rootElement);
 		}
 
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(new File("src/main/resources/gazetter.xml"));
+		StreamResult result = new StreamResult(new File("src/main/resources/gazetterDOM.xml"));
 		transformer.transform(source, result);
 
-		// Output to console for testing
-		StreamResult consoleResult = new StreamResult(System.out);
-		transformer.transform(source, consoleResult);
-		// dictTokensXML.add(token);
-		//
-		// Dictionary dict = new Dictionary();
-		// dict.setTokens(dictTokensXML);
-		//
-		// File file = new File("src/main/resources/gazetter.xml");
-		// JAXB.marshal(dict, file);
+		//StreamResult consoleResult = new StreamResult(System.out);
+		//transformer.transform(source, consoleResult);
+
 	}
 
 	private static void createXMLEntry(DictToken dictToken, Document doc, Element rootElement) {
@@ -202,13 +198,12 @@ public class TransformToConceptMapperDict {
 		Attr codeValue = doc.createAttribute("codeValue");
 		codeValue.setValue(dictToken.getCodeValue());
 		token.setAttributeNode(codeValue);
-		
+
 		Element variant = doc.createElement("variant");
 		token.appendChild(variant);
 
 		Attr base = doc.createAttribute("base");
 		variant.setAttributeNode(base);
-
 
 	}
 

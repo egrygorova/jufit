@@ -12,7 +12,7 @@ public class DictToken {
 	String canonical;
 	String codeType;
 	String codeValue;
-	List<String> variants = new ArrayList<>();
+	List<Variant> variants = new ArrayList<>();
 	
 	public String getCanonical() {
 		return canonical;
@@ -40,14 +40,14 @@ public class DictToken {
 	}
 	
 	@XmlElement( name = "variant" )
-	  public List<String> getVariants()
+	  public List<Variant> getVariants()
 	  {
 	    return variants;
 	  }
 
-	  public void setVariants(List<String> variants2)
+	  public void setVariants(List<Variant> variants)
 	  {
-	    this.variants = variants2;
+	    this.variants = variants;
 	  }
 	
 	
