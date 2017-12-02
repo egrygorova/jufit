@@ -9,19 +9,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="token")
 public class DictToken {
-	String canonical;
-	String codeType;
-	String codeValue;
-	List<Variant> variants = new ArrayList<>();
+	private String codeType;
+	private String codeValue;
+	private List<String> variants = new ArrayList<>();
 	
-	public String getCanonical() {
-		return canonical;
+	public DictToken(String codeType, String codeValue) {
+		this.codeType = codeType;
+		this.codeValue = codeValue;
 	}
 	
-	@XmlAttribute
-	public void setCanonical(String canonical) {
-		this.canonical = canonical;
-	}
 	public String getCodeType() {
 		return codeType;
 	}
@@ -40,15 +36,17 @@ public class DictToken {
 	}
 	
 	@XmlElement( name = "variant" )
-	  public List<Variant> getVariants()
+	  public List<String> getVariants()
 	  {
 	    return variants;
 	  }
 
-	  public void setVariants(List<Variant> variants)
+	  
+	  public void AddVariants(String canon)
 	  {
-	    this.variants = variants;
+		  variants.add(canon);
 	  }
 	
 	
 }
+
