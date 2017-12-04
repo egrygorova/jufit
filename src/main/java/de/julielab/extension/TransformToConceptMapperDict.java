@@ -43,7 +43,7 @@ public class TransformToConceptMapperDict {
 	public static void main(String args[]) throws ParserConfigurationException, TransformerException {
 
 		try {
-			String content = new String(Files.readAllBytes(Paths.get("src/main/resources/gazetterWithFilter")));
+			String content = new String(Files.readAllBytes(Paths.get("src/main/resources/gazetterTest")));
 			String[] entrys = content.split("\n");
 			String s = null;
 			for (int i = 0; i < entrys.length; i++) {
