@@ -31,26 +31,7 @@ public class TransformToConceptMapperDict {
 
 		String content = null;
 		try {
-<<<<<<< HEAD
-			String content = new String(Files.readAllBytes(Paths.get("src/main/resources/gazetterTest")));
-			String[] entrys = content.split("\n");
-			String s = null;
-			for (int i = 0; i < entrys.length; i++) {
-				s = extractContent(entrys[i]);
-				dictTokens.add(s);
-			}
-
-			for (String dictToken : dictTokens) {
-				List<String> parts = Arrays.asList(dictToken.split("\t"));
-				canonicals.add(parts.get(0));
-				codeTypes.add(parts.get(1));
-				codeValues.add(parts.get(2));
-			}
-
-			for (int i = 0; i < codeValues.size(); i++) {
-				dictTokensXML.add(createTokenForXML(canonicals.get(i), codeTypes.get(i), codeValues.get(i)));
-=======
-			content = new String(Files.readAllBytes(Paths.get("gazetterWithFilter.txt")));
+			content = new String(Files.readAllBytes(Paths.get("src/main/resources/gazetterTest")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -67,7 +48,6 @@ public class TransformToConceptMapperDict {
 					System.out.println(parts.get(0));
 					break;
 				}
->>>>>>> a97f131ae95371c4ec5eba0d1e16dcfa14356992
 			}
 
 			if (!found) {
